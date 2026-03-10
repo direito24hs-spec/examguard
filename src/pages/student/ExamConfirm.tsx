@@ -6,6 +6,7 @@ export default function ExamConfirm() {
   const { examId } = useParams();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const name = sessionStorage.getItem('student_name') || '';
   const email = sessionStorage.getItem('student_email') || '';
 
@@ -13,7 +14,6 @@ export default function ExamConfirm() {
     if (!name || !email) navigate(`/exam/${examId}/identify`);
   }, []);
 
-  // ExamSession stores answers in sessionStorage before navigating here
   const getAnswers = (): Record<string, string> => {
     try { return JSON.parse(sessionStorage.getItem('exam_answers') || '{}'); } catch { return {}; }
   };
@@ -24,12 +24,13 @@ export default function ExamConfirm() {
 
   const handleSubmit = async () => {
     setSubmitting(true);
+    setError('');
     const answers = getAnswers();
     const questions = getQuestions();
     const violations = getViolations();
     const maxScore = questions.reduce((s: number, q: any) => s + q.points, 0);
 
-    const { data: sub } = await supabase.from('submissions').insert({
+    const { data: sub, error: subErr } = await supabase.from('submissions').insert({
       exam_id: examId,
       student_name: name,
       student_email: email,
@@ -38,7 +39,11 @@ export default function ExamConfirm() {
       max_score: maxScore,
     }).select().single();
 
-    if (!sub) { setSubmitting(false); return; }
+    if (subErr || !sub) {
+      setError('Erro ao salvar submissao: ' + (subErr?.message || 'unknown'));
+      setSubmitting(false);
+      return;
+    }
 
     const answerRows = questions.map((q: any) => ({
       submission_id: sub.id,
@@ -47,7 +52,17 @@ export default function ExamConfirm() {
       text_answer: q.type === 'essay' ? (answers[q.id] || '') : null,
       is_correct: false,
     }));
-    await supabase.from('answers').insert(answerRows);
+
+    const { error: ansErr } = await supabase.from('answers').insert(answerRows);
+    if (ansErr) {
+      setError('Erro ao salvar respostas: ' + ansErr.message);
+      setSubmitting(false);
+      return;
+    }
+
+    // Calcular score automaticamente via RPC
+    await supabase.rpc('calculate_submission_score', { p_submission_id: sub.id });
+
     sessionStorage.setItem('submission_id', sub.id);
     navigate(`/exam/${examId}/result`);
   };
@@ -67,9 +82,10 @@ export default function ExamConfirm() {
             Questoes respondidas: <span className={`font-semibold ${answered < total ? 'text-yellow-400' : 'text-green-400'}`}>{answered}/{total}</span>
           </p>
           {answered < total && (
-            <p className="text-yellow-400 text-xs">⚠ Voce tem {total - answered} questao(oes) sem resposta. Questoes em branco podem receber penalidade.</p>
+            <p className="text-yellow-400 text-xs">⚠ Voce tem {total - answered} questao(oes) sem resposta.</p>
           )}
         </div>
+        {error && <p className="text-red-400 text-sm">{error}</p>}
         <p className="text-slate-400 text-sm text-center">Ao confirmar, sua prova sera enviada e nao podera ser alterada.</p>
         <div className="flex gap-3">
           <button onClick={() => navigate(`/exam/${examId}/session`)} className="btn-secondary flex-1">← Voltar e Revisar</button>
