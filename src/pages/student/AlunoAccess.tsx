@@ -14,8 +14,6 @@ export default function AlunoAccess() {
     e.preventDefault()
     setLoading(true)
     setError('')
-
-    // Buscar codigo de acesso valido
     const now = new Date().toISOString()
     const { data: token, error: tokenError } = await supabase
       .from('access_tokens')
@@ -25,14 +23,11 @@ export default function AlunoAccess() {
       .lte('valid_from', now)
       .gte('valid_until', now)
       .single()
-
     if (tokenError || !token) {
       setError('Codigo de acesso invalido, expirado ou nao encontrado. Verifique com seu professor.')
       setLoading(false)
       return
     }
-
-    // Registrar acesso do aluno
     const { error: insertError } = await supabase
       .from('student_sessions')
       .insert({
@@ -42,15 +37,12 @@ export default function AlunoAccess() {
         student_class: turma.trim(),
         started_at: new Date().toISOString(),
       })
-
     if (insertError) {
       setError('Erro ao registrar acesso. Tente novamente.')
       setLoading(false)
       return
     }
-
     setLoading(false)
-    // Guardar dados do aluno em sessionStorage para uso durante a prova
     sessionStorage.setItem('aluno_nome', nome.trim())
     sessionStorage.setItem('aluno_turma', turma.trim())
     sessionStorage.setItem('aluno_exam_id', token.exam_id)
@@ -77,8 +69,9 @@ export default function AlunoAccess() {
               </defs>
             </svg>
           </div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight mb-3">ProvaSegura</h1>
-          <p className="text-emerald-300 text-lg font-medium mb-2">Acesso do Aluno</p>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight mb-1">Prova Segura</h1>
+          <p className="text-emerald-300 text-base font-semibold mb-1">Brito Advogados</p>
+          <p className="text-slate-400 text-sm mb-5">Acesso do Aluno</p>
           <p className="text-slate-400 text-sm max-w-xs">
             Insira seus dados e o codigo de acesso fornecido pelo professor para iniciar sua avaliacao.
           </p>
@@ -98,62 +91,31 @@ export default function AlunoAccess() {
           <div className="bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 shadow-2xl">
             <h2 className="text-2xl font-bold text-white mb-1">Identificacao</h2>
             <p className="text-slate-400 text-sm mb-6">Preencha seus dados para iniciar</p>
-
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-lg mb-4">
                 {error}
               </div>
             )}
-
             <form onSubmit={handleAccess} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Nome completo</label>
-                <input
-                  type="text"
-                  value={nome}
-                  onChange={e => setNome(e.target.value)}
-                  required
-                  placeholder="Seu nome completo"
-                  className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-                />
+                <input type="text" value={nome} onChange={e => setNome(e.target.value)} required placeholder="Seu nome completo" className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Turma</label>
-                <input
-                  type="text"
-                  value={turma}
-                  onChange={e => setTurma(e.target.value)}
-                  required
-                  placeholder="Ex: 3A, Turma B, 2025-1"
-                  className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-                />
+                <input type="text" value={turma} onChange={e => setTurma(e.target.value)} required placeholder="Ex: 3A, Turma B, 2025-1" className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">Codigo de acesso</label>
-                <input
-                  type="text"
-                  value={codigo}
-                  onChange={e => setCodigo(e.target.value.toUpperCase())}
-                  required
-                  placeholder="Ex: ABCD-1234"
-                  maxLength={12}
-                  className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition uppercase"
-                />
+                <input type="text" value={codigo} onChange={e => setCodigo(e.target.value.toUpperCase())} required placeholder="Ex: ABCD-1234" maxLength={12} className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition uppercase" />
                 <p className="text-slate-500 text-xs mt-1">Fornecido pelo professor antes da prova</p>
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-900 text-white font-semibold py-2.5 rounded-lg transition text-sm mt-2"
-              >
+              <button type="submit" disabled={loading} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-900 text-white font-semibold py-2.5 rounded-lg transition text-sm mt-2">
                 {loading ? 'Verificando...' : 'Acessar Avaliacao'}
               </button>
             </form>
-
             <div className="mt-5 pt-4 border-t border-slate-700 text-center">
-              <a href="/login" className="text-slate-500 hover:text-slate-300 text-xs transition">
-                Sou professor &rarr; Acessar painel
-              </a>
+              <a href="/login" className="text-slate-500 hover:text-slate-300 text-xs transition">Sou gestor &rarr; Acessar painel</a>
             </div>
           </div>
         </div>
