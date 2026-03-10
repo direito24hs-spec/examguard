@@ -48,7 +48,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-900 flex items-center justify-center font-sans relative">
+    <div className="min-h-dvh bg-slate-900 flex items-center justify-center font-sans relative py-8 lg:py-0 overflow-y-auto lg:overflow-hidden">
       <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-indigo-600 rounded-full blur-[140px] opacity-20"></div>
       <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-amber-600 rounded-full blur-[140px] opacity-10"></div>
       <div className="absolute top-[20%] left-[20%] w-[30%] h-[30%] bg-blue-600 rounded-full blur-[120px] opacity-15"></div>
