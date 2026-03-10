@@ -75,7 +75,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="professor@instituicao.com"
-                  className="flex-1 bg-slate-100 border-none text-slate-900 placeholder-slate-400 rounded-lg px-4 py-4 text-lg focus:ring-2 focus:ring-slate-400 transition"
+                  className="flex-1 bg-slate-100 border-none text-slate-900 placeholder-slate-400 rounded-lg px-4 py-4 text-lg focus:ring-2 focus:ring-slate-400 transition shadow-inner"
                 />
               </div>
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Sua senha"
-                  className="flex-1 bg-slate-100 border-none text-slate-900 placeholder-slate-400 rounded-lg px-4 py-4 text-lg focus:ring-2 focus:ring-slate-400 transition"
+                  className="flex-1 bg-slate-100 border-none text-slate-900 placeholder-slate-400 rounded-lg px-4 py-4 text-lg focus:ring-2 focus:ring-slate-400 transition shadow-inner"
                 />
               </div>
 
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#526D82] hover:bg-[#27374D] disabled:bg-slate-400 text-white font-bold py-5 rounded-xl text-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
+                  className="w-full bg-[#526D82] hover:bg-[#27374D] disabled:bg-slate-400 text-white font-bold py-5 rounded-xl text-xl transition-all shadow-md active:scale-[0.98]"
                 >
                   {loading ? 'Entrando...' : 'Entrar'}
                 </button>
@@ -104,7 +104,7 @@ export default function LoginPage() {
               <div className="pt-8 flex flex-col items-start gap-6">
                 <button
                   onClick={() => navigate('/aluno')}
-                  className="px-8 py-3 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-900 font-medium rounded-lg text-lg transition-all"
+                  className="px-8 py-3 bg-white hover:bg-slate-50 border-2 border-slate-200 text-slate-900 font-bold rounded-lg text-lg transition-all shadow-sm active:scale-[0.98]"
                 >
                   Acessar como Aluno
                 </button>
@@ -147,13 +147,13 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="professor@instituicao.com"
-                    className="w-full bg-slate-100 border-none text-slate-900 placeholder-slate-400 rounded-lg px-4 py-4 text-lg focus:ring-2 focus:ring-slate-400 transition"
+                    className="w-full bg-slate-100 border-none text-slate-900 placeholder-slate-400 rounded-lg px-4 py-4 text-lg focus:ring-2 focus:ring-slate-400 transition shadow-inner"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-slate-800 hover:bg-black text-white font-bold py-4 rounded-xl text-lg transition"
+                  className="w-full bg-[#526D82] hover:bg-[#27374D] text-white font-bold py-4 rounded-xl text-lg transition"
                 >
                   {loading ? 'Enviando...' : 'Enviar link de recuperacao'}
                 </button>
@@ -162,54 +162,50 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Lado Direito - Ilustracao */}
-        <div className="hidden md:flex flex-1 items-center justify-end relative">
-          <div className="relative w-full max-w-[700px]">
-            {/* Simulacao da ilustracao isométrica do monitor com dashboards */}
-            <div className="relative z-10 animate-fade-in transition-all duration-1000 transform hover:scale-105">
-              <img 
-                src="https://img.freepik.com/free-vector/modern-monitor-with-data-chart-dashboard-concept_1017-31628.jpg" 
-                alt="Dashboard Analytics" 
-                className="w-full h-auto drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)] rounded-2xl"
-              />
-              
-              {/* Elementos flutuantes simulando o estilo da imagem do usuario */}
-              <div className="absolute -top-10 -right-10 bg-white p-4 rounded-xl shadow-xl border border-slate-100 animate-bounce transition-all duration-1000 delay-150">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white">🔑</div>
-                  <div>
-                    <div className="w-16 h-2 bg-slate-200 rounded mb-1"></div>
-                    <div className="w-10 h-2 bg-slate-100 rounded"></div>
-                  </div>
-                </div>
-              </div>
+        {/* Lado Direito - Monitor Limpo conforme modelo */}
+        <div className="hidden md:flex flex-1 items-center justify-end">
+          <div className="relative w-full max-w-[750px]">
+             {/* Vetor de monitor isométrico limpo para manter a identidade visual do modelo */}
+             <div className="relative z-10 transform scale-110">
+                <svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto drop-shadow-2xl">
+                  {/* Base do monitor */}
+                  <path d="M400 520 L480 500 L560 520 L480 540 Z" fill="#E2E8F0"/>
+                  <path d="M470 480 L490 480 L490 510 L470 510 Z" fill="#CBD5E0"/>
+                  
+                  {/* Corpo do monitor */}
+                  <path d="M200 150 L650 100 L700 380 L250 430 Z" fill="#2D3748" stroke="#1A202C" strokeWidth="4"/>
+                  <path d="M220 170 L630 125 L675 365 L265 410 Z" fill="#F8FAFC"/>
+                  
+                  {/* Conteúdo do dashboard (simulado) */}
+                  <rect x="240" y="190" width="100" height="80" rx="4" fill="#E2E8F0" transform="rotate(-5, 240, 190)"/>
+                  <rect x="360" y="180" width="240" height="150" rx="4" fill="#EDF2F7" transform="rotate(-5, 360, 180)"/>
+                  <rect x="250" y="290" width="90" height="100" rx="4" fill="#E2E8F0" transform="rotate(-5, 250, 290)"/>
+                  
+                  {/* Linhas de dados simuladas */}
+                  <rect x="380" y="200" width="180" height="8" rx="2" fill="#CBD5E0" transform="rotate(-5, 380, 200)"/>
+                  <rect x="380" y="220" width="140" height="8" rx="2" fill="#CBD5E0" transform="rotate(-5, 380, 220)"/>
+                  <rect x="380" y="240" width="200" height="40" rx="4" fill="#526D82" opacity="0.1" transform="rotate(-5, 380, 240)"/>
+                  
+                  {/* Avatares simulados na tela */}
+                  <circle cx="270" cy="215" r="12" fill="#A0AEC0"/>
+                  <circle cx="300" cy="212" r="12" fill="#A0AEC0"/>
+                  <circle cx="330" cy="210" r="12" fill="#A0AEC0"/>
 
-              <div className="absolute top-1/4 -left-12 bg-white p-5 rounded-2xl shadow-2xl border border-slate-100 animate-pulse">
-                <div className="text-xs font-bold text-slate-400 uppercase mb-2">Taxa de Cola</div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
-                  <div className="text-2xl font-black text-slate-900">75%</div>
-                </div>
-              </div>
+                  {/* Icones externos flutuantes (limpos) */}
+                  <g className="animate-bounce" style={{ animationDuration: '3s' }}>
+                    <path d="M680 180 L730 160 L730 200 L680 220 Z" fill="#EDF2F7" stroke="#CBD5E0" strokeWidth="2"/>
+                    <path d="M700 185 L715 178 L715 195 L700 202 Z" fill="#526D82"/>
+                  </g>
+                  
+                  <g className="animate-pulse">
+                    <path d="M150 350 L220 330 L220 400 L150 420 Z" fill="#EDF2F7" stroke="#CBD5E0" strokeWidth="2"/>
+                    <circle cx="185" cy="375" r="15" fill="#526D82" opacity="0.2"/>
+                  </g>
+                </svg>
+             </div>
 
-              <div className="absolute bottom-10 -right-8 bg-white p-5 rounded-2xl shadow-2xl border border-slate-100">
-                <div className="text-xs font-bold text-slate-400 uppercase mb-2">Desempenho da Turma</div>
-                <div className="flex items-end gap-1 h-12">
-                  <div className="w-3 bg-blue-100 h-1/2 rounded-t-sm"></div>
-                  <div className="w-3 bg-blue-200 h-3/4 rounded-t-sm"></div>
-                  <div className="w-3 bg-blue-400 h-full rounded-t-sm"></div>
-                  <div className="w-3 bg-blue-600 h-2/3 rounded-t-sm"></div>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-6 left-1/4 bg-white px-4 py-2 rounded-full shadow-lg border border-slate-100 flex items-center gap-2">
-                 <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                 <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Monitoramento em Tempo Real</span>
-              </div>
-            </div>
-
-            {/* Background decoration */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-slate-50 rounded-full -z-0 opacity-50 blur-3xl"></div>
+             {/* Background soft glow */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-blue-50 rounded-full -z-0 opacity-40 blur-3xl"></div>
           </div>
         </div>
       </div>
