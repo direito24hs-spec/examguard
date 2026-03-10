@@ -53,7 +53,10 @@ export default function ProfessorDashboard() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
             </div>
-            <span className="text-white font-bold text-lg">ProvaSegura</span>
+            <div>
+              <span className="text-white font-bold text-sm">Prova Segura</span>
+              <span className="text-blue-400 text-xs block leading-none">Brito Advogados</span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-slate-400 text-sm hidden md:block">{userEmail}</span>
@@ -67,7 +70,7 @@ export default function ProfessorDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <button
             onClick={() => navigate('/professor/exam/new')}
-            className="bg-blue-600/10 hover:bg-blue-600/20 border border-blue-600/30 rounded-xl p-5 text-left transition group"
+            className="bg-blue-600/10 hover:bg-blue-600/20 border border-blue-600/30 rounded-xl p-5 text-left transition"
           >
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-3">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -77,7 +80,7 @@ export default function ProfessorDashboard() {
           </button>
           <button
             onClick={() => navigate('/professor/codigos')}
-            className="bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-600/30 rounded-xl p-5 text-left transition group"
+            className="bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-600/30 rounded-xl p-5 text-left transition"
           >
             <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center mb-3">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
