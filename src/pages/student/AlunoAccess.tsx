@@ -50,7 +50,7 @@ export default function AlunoAccess() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 flex items-center justify-center px-4">
+    <div className="min-h-dvh bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 flex items-center justify-center py-12 px-4 overflow-y-auto">
       <div className="w-full max-w-5xl flex flex-col md:flex-row items-center gap-12">
 
         {/* Lado esquerdo */}
