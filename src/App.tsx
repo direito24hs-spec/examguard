@@ -51,14 +51,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rotas públicas */}
+        {/* Rotas publicas */}
         <Route path="/login" element={!session ? <LoginPage /> : <Navigate to="/" replace />} />
         <Route path="/exam/:examId/identify" element={<StudentIdentify />} />
         <Route path="/exam/:examId/instructions" element={<ExamInstructions />} />
         <Route path="/exam/:examId/session" element={<ExamSession />} />
         <Route path="/exam/:examId/confirm" element={<ExamConfirm />} />
-        <Route path="/exam/:examId/result/:attemptId" element={<ExamResult />} />
-
+        <Route path="/exam/:examId/result" element={<ExamResult />} />
         {/* Rotas do professor */}
         <Route
           path="/"
@@ -66,8 +65,8 @@ function App() {
             !session
               ? <Navigate to="/login" replace />
               : userRole === 'professor'
-                ? <ProfessorDashboard />
-                : <Navigate to="/login" replace />
+              ? <ProfessorDashboard />
+              : <Navigate to="/login" replace />
           }
         />
         <Route
@@ -75,7 +74,7 @@ function App() {
           element={!session ? <Navigate to="/login" replace /> : <ExamForm />}
         />
         <Route
-          path="/exam/:examId/edit"
+          path="/exam/:id/edit"
           element={!session ? <Navigate to="/login" replace /> : <ExamForm />}
         />
         <Route
@@ -86,11 +85,9 @@ function App() {
           path="/exam/:examId/results"
           element={!session ? <Navigate to="/login" replace /> : <ExamResults />}
         />
-
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
 }
-
 export default App
