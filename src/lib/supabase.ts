@@ -7,6 +7,22 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
+
+export type Exam = {
+  id: string
+  title: string
+  description: string | null
+  mode: 'prova' | 'simulado'
+  duration_minutes: number
+  max_attempts: number
+  penalty_per_wrong: number
+  penalty_per_blank: number
+  allow_penalty: boolean
+  randomize_questions: boolean
+  show_feedback_after: 'submit' | 'release'
+  status?: 'draft' | 'open' | 'closed'
+  professor_id?: string
+}
 export interface Database {
   public: {
     Tables: {
