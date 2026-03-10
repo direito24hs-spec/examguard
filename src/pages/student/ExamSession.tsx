@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
@@ -15,7 +15,6 @@ interface Question {
 export default function ExamSession() {
   const { examId } = useParams();
   const navigate = useNavigate();
-  const [exam, setExam] = useState<any>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [current, setCurrent] = useState(0);
@@ -24,6 +23,7 @@ export default function ExamSession() {
   const [showWarning, setShowWarning] = useState(false);
   const [loading, setLoading] = useState(true);
   const violationsRef = useRef(0);
+  const answersRef = useRef<Record<string, string>>({});
   const canvasRefs = useRef<Record<string, HTMLCanvasElement | null>>({});
 
   const name = sessionStorage.getItem('student_name') || '';
@@ -34,10 +34,12 @@ export default function ExamSession() {
     loadExam();
   }, [examId]);
 
+  // Keep answersRef in sync
+  useEffect(() => { answersRef.current = answers; }, [answers]);
+
   const loadExam = async () => {
     const { data: examData } = await supabase.from('exams').select('*').eq('id', examId).single();
     if (!examData) { navigate('/'); return; }
-    setExam(examData);
     setTimeLeft(examData.duration_minutes * 60);
 
     const { data: qData } = await supabase
@@ -49,6 +51,7 @@ export default function ExamSession() {
     let qs = qData as Question[] || [];
     if (examData.randomize_questions) qs = qs.sort(() => Math.random() - 0.5);
     setQuestions(qs);
+    sessionStorage.setItem('exam_questions', JSON.stringify(qs));
     setLoading(false);
   };
 
@@ -57,7 +60,13 @@ export default function ExamSession() {
     if (loading || timeLeft <= 0) return;
     const interval = setInterval(() => {
       setTimeLeft(t => {
-        if (t <= 1) { clearInterval(interval); handleAutoSubmit(); return 0; }
+        if (t <= 1) {
+          clearInterval(interval);
+          sessionStorage.setItem('exam_answers', JSON.stringify(answersRef.current));
+          sessionStorage.setItem('exam_violations', String(violationsRef.current));
+          navigate(`/exam/${examId}/confirm`);
+          return 0;
+        }
         return t - 1;
       });
     }, 1000);
@@ -66,20 +75,14 @@ export default function ExamSession() {
 
   // Anti-cheat: focus monitoring
   useEffect(() => {
-    const handleBlur = () => {
+    const register = () => {
       violationsRef.current += 1;
       setViolations(violationsRef.current);
       setShowWarning(true);
       setTimeout(() => setShowWarning(false), 4000);
     };
-    const handleVisibility = () => {
-      if (document.hidden) {
-        violationsRef.current += 1;
-        setViolations(violationsRef.current);
-        setShowWarning(true);
-        setTimeout(() => setShowWarning(false), 4000);
-      }
-    };
+    const handleBlur = () => register();
+    const handleVisibility = () => { if (document.hidden) register(); };
     window.addEventListener('blur', handleBlur);
     document.addEventListener('visibilitychange', handleVisibility);
     return () => {
@@ -88,78 +91,41 @@ export default function ExamSession() {
     };
   }, []);
 
-  // Anti-cheat: render question text on canvas to prevent copy
+  // Render question as canvas (anti-copy)
   useEffect(() => {
     if (questions.length === 0) return;
-    questions.forEach(q => {
-      const canvas = canvasRefs.current[q.id];
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      const maxWidth = canvas.width - 20;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#f1f5f9';
-      ctx.font = '15px Inter, sans-serif';
-      // word-wrap
-      const words = q.statement.split(' ');
-      let line = '';
-      let y = 25;
-      for (const word of words) {
-        const test = line + word + ' ';
-        if (ctx.measureText(test).width > maxWidth && line !== '') {
-          ctx.fillText(line, 10, y);
-          line = word + ' ';
-          y += 22;
-        } else { line = test; }
-      }
-      ctx.fillText(line, 10, y);
-      const totalHeight = y + 30;
-      canvas.height = totalHeight;
-      // Re-draw after height change
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#f1f5f9';
-      ctx.font = '15px Inter, sans-serif';
-      let y2 = 25;
-      let line2 = '';
-      for (const word of words) {
-        const test = line2 + word + ' ';
-        if (ctx.measureText(test).width > maxWidth && line2 !== '') {
-          ctx.fillText(line2, 10, y2);
-          line2 = word + ' ';
-          y2 += 22;
-        } else { line2 = test; }
-      }
-      ctx.fillText(line2, 10, y2);
-    });
+    const q = questions[current];
+    if (!q) return;
+    const canvas = canvasRefs.current[q.id];
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const w = canvas.width;
+    const maxW = w - 20;
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(0, 0, w, 300);
+    ctx.fillStyle = '#f1f5f9';
+    ctx.font = '15px sans-serif';
+    const words = q.statement.split(' ');
+    let line = '';
+    let y = 25;
+    for (const word of words) {
+      const test = line + word + ' ';
+      if (ctx.measureText(test).width > maxW && line) {
+        ctx.fillText(line.trim(), 10, y);
+        line = word + ' ';
+        y += 24;
+      } else line = test;
+    }
+    if (line.trim()) ctx.fillText(line.trim(), 10, y);
+    canvas.dataset.height = String(y + 30);
+    canvas.style.height = (y + 30) + 'px';
   }, [questions, current]);
 
-  const handleAutoSubmit = useCallback(async () => {
-    await submitAnswers();
-  }, [answers, violationsRef]);
-
-  const submitAnswers = async () => {
-    const { data: sub } = await supabase.from('submissions').insert({
-      exam_id: examId,
-      student_name: name,
-      student_email: email,
-      focus_violations: violationsRef.current,
-      score: 0,
-      max_score: questions.reduce((s, q) => s + q.points, 0),
-    }).select().single();
-    if (!sub) return;
-    const answerRows = questions.map(q => ({
-      submission_id: sub.id,
-      question_id: q.id,
-      option_id: q.type !== 'essay' ? (answers[q.id] || null) : null,
-      text_answer: q.type === 'essay' ? (answers[q.id] || '') : null,
-      is_correct: false,
-    }));
-    await supabase.from('answers').insert(answerRows);
-    sessionStorage.setItem('submission_id', sub.id);
-    navigate(`/exam/${examId}/result`);
+  const goConfirm = () => {
+    sessionStorage.setItem('exam_answers', JSON.stringify(answers));
+    sessionStorage.setItem('exam_violations', String(violationsRef.current));
+    navigate(`/exam/${examId}/confirm`);
   };
 
   const formatTime = (s: number) => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
@@ -185,10 +151,10 @@ export default function ExamSession() {
           <div className={`text-lg font-mono font-bold ${timeLeft < 300 ? 'text-red-400' : 'text-white'}`}>
             {formatTime(timeLeft)}
           </div>
-          <div className="text-slate-400 text-sm">{current + 1} / {questions.length}</div>
+          <div className="text-slate-400 text-sm">{current + 1}/{questions.length}</div>
         </div>
         <div className="h-1 bg-slate-700">
-          <div className="h-1 bg-blue-500 transition-all" style={{ width: `${((current + 1) / questions.length) * 100}%` }} />
+          <div className="h-1 bg-blue-500" style={{ width: `${((current + 1) / questions.length) * 100}%` }} />
         </div>
       </div>
 
@@ -200,14 +166,13 @@ export default function ExamSession() {
           </div>
           <canvas
             ref={el => { canvasRefs.current[q.id] = el; }}
-            width={700}
-            height={80}
-            className="w-full rounded select-none"
-            style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+            width={680}
+            height={120}
+            className="w-full rounded select-none pointer-events-none"
           />
         </div>
 
-        {q.type !== 'essay' && (
+        {q.type !== 'essay' ? (
           <div className="space-y-2 mb-6">
             {q.options.map((opt, i) => (
               <button
@@ -219,14 +184,11 @@ export default function ExamSession() {
                     : 'bg-slate-800 border-slate-600 text-slate-300 hover:border-slate-400'
                 }`}
               >
-                <span className="font-medium mr-2">{String.fromCharCode(65 + i)})</span>
-                {opt.text}
+                <span className="font-medium mr-2">{String.fromCharCode(65+i)})</span>{opt.text}
               </button>
             ))}
           </div>
-        )}
-
-        {q.type === 'essay' && (
+        ) : (
           <textarea
             className="input w-full mb-6"
             rows={6}
@@ -237,31 +199,20 @@ export default function ExamSession() {
         )}
 
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => setCurrent(c => Math.max(0, c - 1))}
-            disabled={current === 0}
-            className="btn-secondary"
-          >Anterior</button>
-
-          <div className="flex gap-1">
+          <button onClick={() => setCurrent(c => Math.max(0, c-1))} disabled={current===0} className="btn-secondary">Anterior</button>
+          <div className="flex gap-1 flex-wrap justify-center max-w-xs">
             {questions.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
+              <button key={i} onClick={() => setCurrent(i)}
                 className={`w-7 h-7 text-xs rounded ${
-                  i === current ? 'bg-blue-600 text-white' :
-                  answers[questions[i].id] ? 'bg-green-700 text-white' :
-                  'bg-slate-700 text-slate-400'
-                }`}
-              >{i + 1}</button>
+                  i===current?'bg-blue-600 text-white':
+                  answers[questions[i].id]?'bg-green-700 text-white':'bg-slate-700 text-slate-400'
+                }`}>{i+1}</button>
             ))}
           </div>
-
-          {current < questions.length - 1 ? (
-            <button onClick={() => setCurrent(c => c + 1)} className="btn-primary">Proxima</button>
-          ) : (
-            <button onClick={() => navigate(`/exam/${examId}/confirm`)} className="btn-primary bg-green-600 hover:bg-green-500">Revisar e Enviar</button>
-          )}
+          {current < questions.length-1
+            ? <button onClick={() => setCurrent(c=>c+1)} className="btn-primary">Proxima</button>
+            : <button onClick={goConfirm} className="btn-primary bg-green-600 hover:bg-green-500">Revisar e Enviar</button>
+          }
         </div>
       </div>
     </div>
