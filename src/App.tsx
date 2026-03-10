@@ -7,6 +7,8 @@ import ProfessorDashboard from './pages/professor/Dashboard'
 import ExamForm from './pages/professor/ExamForm'
 import QuestionManager from './pages/professor/QuestionManager'
 import ExamResults from './pages/professor/ExamResults'
+import AccessTokenManager from './pages/professor/AccessTokenManager'
+import AlunoAccess from './pages/student/AlunoAccess'
 import StudentIdentify from './pages/student/StudentIdentify'
 import ExamInstructions from './pages/student/ExamInstructions'
 import ExamSession from './pages/student/ExamSession'
@@ -52,42 +54,30 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Rotas publicas */}
-        <Route path="/login" element={!session ? <LoginPage /> : <Navigate to="/" replace />} />
+        <Route path="/login" element={!session ? <LoginPage /> : <Navigate to="/professor" replace />} />
+        <Route path="/aluno" element={<AlunoAccess />} />
+
+        {/* Rotas do aluno pela prova */}
         <Route path="/exam/:examId/identify" element={<StudentIdentify />} />
         <Route path="/exam/:examId/instructions" element={<ExamInstructions />} />
         <Route path="/exam/:examId/session" element={<ExamSession />} />
         <Route path="/exam/:examId/confirm" element={<ExamConfirm />} />
         <Route path="/exam/:examId/result" element={<ExamResult />} />
-        {/* Rotas do professor */}
-        <Route
-          path="/"
-          element={
-            !session
-              ? <Navigate to="/login" replace />
-              : userRole === 'professor'
-              ? <ProfessorDashboard />
-              : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/exam/new"
-          element={!session ? <Navigate to="/login" replace /> : <ExamForm />}
-        />
-        <Route
-          path="/exam/:id/edit"
-          element={!session ? <Navigate to="/login" replace /> : <ExamForm />}
-        />
-        <Route
-          path="/exam/:examId/questions"
-          element={!session ? <Navigate to="/login" replace /> : <QuestionManager />}
-        />
-        <Route
-          path="/exam/:examId/results"
-          element={!session ? <Navigate to="/login" replace /> : <ExamResults />}
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
+
+        {/* Rotas do professor (requerem autenticacao) */}
+        <Route path="/professor" element={session ? <ProfessorDashboard /> : <Navigate to="/login" replace />} />
+        <Route path="/professor/exam/new" element={session ? <ExamForm /> : <Navigate to="/login" replace />} />
+        <Route path="/professor/exam/:id" element={session ? <ExamForm /> : <Navigate to="/login" replace />} />
+        <Route path="/professor/exam/:id/questions" element={session ? <QuestionManager /> : <Navigate to="/login" replace />} />
+        <Route path="/professor/exam/:id/results" element={session ? <ExamResults /> : <Navigate to="/login" replace />} />
+        <Route path="/professor/codigos" element={session ? <AccessTokenManager /> : <Navigate to="/login" replace />} />
+
+        {/* Redirect default */}
+        <Route path="/" element={<Navigate to={session ? '/professor' : '/login'} replace />} />
+        <Route path="*" element={<Navigate to={session ? '/professor' : '/login'} replace />} />
       </Routes>
     </BrowserRouter>
   )
 }
+
 export default App
