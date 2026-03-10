@@ -45,7 +45,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 flex items-center justify-center px-4">
       <div className="w-full max-w-5xl flex flex-col md:flex-row items-center gap-12">
 
-        {/* Lado esquerdo - ilustracao */}
+        {/* Lado esquerdo - marca */}
         <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
           <div className="mb-6">
             <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,9 +60,12 @@ export default function LoginPage() {
               </defs>
             </svg>
           </div>
-          <h1 className="text-5xl font-extrabold text-white tracking-tight mb-3">ProvaSegura</h1>
-          <p className="text-blue-300 text-lg font-medium mb-4">Sistema de Avaliacao Inteligente</p>
-          <div className="space-y-3 mt-2">
+          <h1 className="text-4xl font-extrabold text-white tracking-tight mb-1 leading-tight">
+            Prova Segura
+          </h1>
+          <p className="text-blue-300 text-base font-semibold mb-1">Brito Advogados</p>
+          <p className="text-slate-400 text-sm mb-5">Sistema de Avaliacao Inteligente</p>
+          <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
                 <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -84,14 +87,14 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Lado direito - formulario */}
+        {/* Formulario */}
         <div className="w-full md:w-96">
           <div className="bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 shadow-2xl">
 
             {mode === 'login' ? (
               <>
-                <h2 className="text-2xl font-bold text-white mb-1">Acesso do Professor</h2>
-                <p className="text-slate-400 text-sm mb-6">Entre com suas credenciais institucionais</p>
+                <h2 className="text-2xl font-bold text-white mb-1">Acesso do Gestor</h2>
+                <p className="text-slate-400 text-sm mb-6">Entre com suas credenciais</p>
 
                 {error && (
                   <div className="bg-red-500/10 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-lg mb-4">
@@ -107,7 +110,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
-                      placeholder="professor@instituicao.com"
+                      placeholder="seu@email.com"
                       className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     />
                   </div>
@@ -181,7 +184,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
-                      placeholder="professor@instituicao.com"
+                      placeholder="seu@email.com"
                       className="w-full bg-slate-700/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     />
                   </div>
