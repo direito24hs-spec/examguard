@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import ProfessorHeader from '../../components/ProfessorHeader'
 
 type AccessToken = {
   id: string
@@ -91,8 +92,9 @@ export default function AccessTokenManager() {
   const isExpired = (valid_until: string) => new Date(valid_until) < new Date()
 
   return (
-    <div className="min-h-screen bg-slate-900 p-6">
-      <div className="max-w-5xl mx-auto">
+    <div className="h-screen overflow-hidden bg-slate-50 flex">
+      <ProfessorHeader />
+      <div className="flex-1 overflow-auto p-6">    <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <button onClick={() => navigate('/professor')} className="text-slate-400 hover:text-white transition">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -217,6 +219,8 @@ export default function AccessTokenManager() {
           </div>
         )}
       </div>
+    </div>
+            </div>
     </div>
   )
 }
