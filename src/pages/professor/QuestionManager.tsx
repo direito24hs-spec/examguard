@@ -139,17 +139,17 @@ export default function QuestionManager() {
   }
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-slate-50">
+    <div className="h-screen flex items-center justify-center bg-slate-900">
       <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 flex flex-col font-sans">
+    <div className="h-screen overflow-hidden bg-slate-900 flex-col font-sans">
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shrink-0 shadow-sm relative z-10">
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => navigate(`/professor/exams/${examId}`)}
+            onClick={() => navigate(`/professor)}
             className="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-500"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
