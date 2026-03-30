@@ -129,7 +129,7 @@ export default function QuestionManager() {
         }
       }
       alert('Questoes salvas com sucesso!');
-      navigate(`/professor/exams/${examId}`);
+      navigate(`/professor`);
     } catch (err) {
       console.error(err);
       alert('Erro ao salvar questoes.');
